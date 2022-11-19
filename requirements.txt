@@ -1,0 +1,10 @@
+jupyter
+jupyter-cache
+pandas
+numpy
+matplotlib
+mecab-python3
+unidic-lite
+ginza
+ja-ginza
+spacy
