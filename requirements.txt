@@ -3,3 +3,6 @@ ginza
 ja_ginza
 matplotlib
 seaborn
+scikit-learn
+opencv-python
+scikit-image

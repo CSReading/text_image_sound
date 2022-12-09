@@ -4,7 +4,9 @@ USER root
 RUN apt update \
  && apt install -y git wget \
     # install mecab
-    mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8
+    mecab libmecab-dev mecab-ipadic-utf8 mecab-jumandic-utf8 \
+    # package for opencv
+    libopencv-dev
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
