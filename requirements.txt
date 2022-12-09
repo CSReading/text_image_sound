@@ -1,1 +1,5 @@
 pandas
+ginza
+ja_ginza
+matplotlib
+seaborn
