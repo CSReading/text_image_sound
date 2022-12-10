@@ -6,6 +6,3 @@ seaborn
 scikit-learn
 opencv-python
 scikit-image
-traitlets<5.0.0 # prevend error from fast.detect
-ipython<=6.4.2
-ipykernel<=7.34.0
