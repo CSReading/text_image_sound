@@ -19,6 +19,11 @@
 		"ms-toolsai.jupyter",
 		"quarto.quarto"
 	],
+	"workspaceFolder": "/home/vscode/text_image_sound", 
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/text_image_sound,type=bind,consistency=cached",
+	"mounts": [
+     	"source=${localEnv:HOME}/.pip/,target=/home/vscode/.pip/,type=bind,consistency=cached",
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

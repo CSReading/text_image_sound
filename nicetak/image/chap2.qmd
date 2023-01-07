@@ -1,0 +1,141 @@
+---
+title: "第２章： 画像のデータ表現"
+author: Nicetak
+date: '2022-11-20'
+format:
+  html:
+    keep-ipynb: true
+    self-contained: true
+execute:
+  message: false
+  warning: false
+jupyter: python3
+---
+
+```{python}
+import cv2 as cv
+import pyprojroot
+from matplotlib import pyplot as plt
+import numpy as np
+
+def here(s):
+    return str(pyprojroot.here(s))
+
+```
+
+
+## 2.1, 2.2
+>各画素のRGBの明度値の平均値が128以上の場合には， (R, G, B)＝(255, 255, 255)，
+>128未満の場合には (R, G, B)＝(0, 0, 0) に書き換えることで，
+>画像全体を２値画像に変換するコードを作成せよ.
+
+>各画素の明度値をRGBの明度値の平均値に置き換えることで， 画像をグレースケール化し， 保存するコードを作成せよ．
+
+```{python}
+mat_woman = cv.imread(here("nicetak/image/img/woman.png"))
+mat_woman_rgb = cv.cvtColor(mat_woman, cv.COLOR_BGR2RGB)
+```
+
+
+```{python}
+height, width, _ = mat_woman.shape
+mat_woman_binary = [[np.sum(mat_woman[h][w]) >= 128 * 3 for w in range(width)] for h in range(height)]
+mat_woman_gray = [[np.mean(mat_woman[h][w]) for w in range(width)] for h in range(height)]
+```
+
+::: {.columns}
+::: {.column width=33%}
+
+```{python}
+#| echo: false
+plt.imshow(mat_woman_rgb)
+plt.axis('off')
+plt.show()
+```
+
+:::
+::: {.column width=33%}
+
+```{python}
+#| echo: false
+plt.imshow(mat_woman_binary, cmap = "gray")
+plt.axis('off')
+plt.show()
+```
+:::
+
+::: {.column width=33%}
+
+```{python}
+#| echo: false
+plt.imshow(mat_woman_gray, cmap = "gray")
+plt.axis('off')
+plt.show()
+```
+
+:::
+::::
+
+## 2.3
+
+>画像のR,G,Bの各チャンネルについて， 明度値の平均値と分散を表示するコードを作成し， 様々な画像を入力して試してみよ．
+
+```{python}
+#| echo: false
+mat_plant = cv.imread(here("nicetak/image/img/plant.png"))
+mat_plant_rgb = cv.cvtColor(mat_plant, cv.COLOR_BGR2RGB)
+mat_beach = cv.imread(here("nicetak/image/img/beach.png"))
+mat_beach_rgb = cv.cvtColor(mat_beach, cv.COLOR_BGR2RGB)
+```
+
+:::: {.columns}
+
+::: {.column width="33%"}
+
+```{python}
+#| echo: false
+b, g, r = cv.split(mat_woman)
+
+print(f"Mean:\n R({np.mean(r):.0f}), G({np.mean(g):.0f}), B({np.mean(b):.0f})")
+print(f"SD:\n R({np.std(r):.0f}), G({np.std(g):.0f}), B ({np.std(b):.0f})")
+
+plt.imshow(mat_woman_rgb)
+plt.axis('off')
+plt.show()
+```
+
+:::
+
+::: {.column width="33%"}
+
+```{python}
+#| echo: false
+b, g, r = cv.split(mat_plant)
+
+print(f"Mean:\n R({np.mean(r):.0f}), G({np.mean(g):.0f}), B({np.mean(b):.0f})")
+print(f"SD:\n R({np.std(r):.0f}), G({np.std(g):.0f}), B ({np.std(b):.0f})")
+
+plt.imshow(mat_plant_rgb)
+plt.axis('off')
+plt.show()
+```
+
+:::
+
+::: {.column width="33%"}
+
+```{python}
+#| echo: false
+b, g, r = cv.split(mat_beach)
+
+print(f"Mean:\n R({np.mean(r):.0f}), G({np.mean(g):.0f}), B({np.mean(b):.0f})")
+print(f"SD:\n R({np.std(r):.0f}), G({np.std(g):.0f}), B ({np.std(b):.0f})")
+
+plt.imshow(mat_beach_rgb)
+plt.axis('off')
+plt.show()
+```
+
+:::
+
+::::

@@ -1,0 +1,102 @@
+---
+title: "第4章： 応用技術"
+author: Nicetak
+date: '2022-11-20'
+format:
+  html:
+    keep-ipynb: true
+    self-contained: true
+    code-fold: show
+execute:
+  echo: false
+  warning: false
+bibliography: text_image_sound.bib
+jupyter: python3
+---
+
+## 4.1
+>Wikipedia や新聞記事など，インターネット上のテキストをいくつか（３つ程度でも構わない）ダウンロードし，
+>ごく小規模なコーパスを作ってみよう． それらの文書に対して形態素解析を行い，
+>いずれかの文書に含まれる単語の， 4.2で述べた TF-IDF を計算してみよう．
+
+```{python}
+import pandas as pd
+import spacy
+nlp = spacy.load("ja_ginza")
+
+url = "https://nlp100.github.io/data/neko.txt"
+df = pd.read_csv(url, header = None)
+df.rename(columns={0 : "raw"}, inplace=True)
+
+indices = [df.index[df.raw == s][0] for s in ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一"]]
+indices.append(len(df))
+chapter = []
+for i in range(1, len(indices)):
+    chapter.extend([i] * (indices[i] - indices[i-1]))
+
+df["chapter"] = chapter
+df.drop(index = indices[0:-1], inplace = True)
+df.reset_index(drop=True, inplace = True)
+
+# Separate tokens
+docs = list(nlp.pipe(df[df.chapter == 1].raw.tolist()))
+docs_separated = [" ".join([str(word) for word in doc]) for doc in docs]
+```
+
+```{python}
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+vectorizer = TfidfVectorizer(max_df=0.90)
+X = vectorizer.fit_transform(docs_separated)
+```
+
+
+## 4.2
+>4.1で計算した TF-IDF を元に， ある２つのテキストの余弦類似度を計算してみよう．
+
+「吾輩は猫である。」に最も近い文を第一章の中で計算する.
+
+```{python}
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+sim = cosine_similarity(X)
+
+# Docs at 0 is "吾輩は猫である"
+idx_top5 = np.flip(np.argpartition(sim[0], -5)[-6:-1])
+
+for i in idx_top5:
+    print(docs[i])
+```
+
+# 4.3
+>評価表現に対して否定表現が使われている際には極性が反転することがある．
+>例えば， 「値段は高すぎない」という文を 考えると， 「高すぎ」という評価表現でマッチした場合に
+>「値段」という評価属性の評価極性が否定となってしまうが， 文の意味を考えると本来は肯定であろう．
+>否定表現を検出し， その場合は極性を反転させるようにリスト4.7のコードを改良してみよう．
+
+CaboChaのコードの改良自体にあまり魅力を感じなかったので, spaCyで依存関係を可視化した.
+教科書の評価属性-評価表現の関係は, spaCyにおける nsubj の関係を抽出していることと同じようである.
+
+```{python}
+from spacy import displacy
+
+nlp = spacy.load('ja_ginza')
+doc = nlp('とても画面が綺麗です.')
+
+displacy.render(doc, style='dep')
+```
+
+```{python}
+doc = nlp('ただ, ちょっと値段が高すぎるのが難点です.')
+displacy.render(doc, style='dep')
+```
+
+
+適当な極性辞書を作れば評価極性は計算でき,
+評価表現に依存する aux 関係の否定表現を検出すれば, 目的の操作はできる.
+
+```{python}
+doc = nlp('値段も高すぎないです.')
+displacy.render(doc, style='dep')
+```

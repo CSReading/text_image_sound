@@ -9,3 +9,4 @@ ginza
 ja-ginza
 spacy
 scikit-learn
+opencv-python
