@@ -1,8 +1,10 @@
+ipykernel
 pandas
-ginza
-ja_ginza
+# ginza
+# ja_ginza
 matplotlib
 seaborn
-scikit-learn
-opencv-python
-scikit-image
+# scikit-learn
+# opencv-python
+# scikit-image
+librosa
